@@ -16,6 +16,26 @@ var _project: Project
 @onready var bake_viewport: Viewport = $BakeViewport
 @onready var bake_node: Node2D = $BakeViewport/Bake
 
+var edits: Array[Edit]
+
+
+## Basic class to store a page and a layer within.
+class Edit:
+	var page: int
+	var layer_id: int
+	var layer_image: Variant
+	
+	func _init(p, id, img) -> void:
+		page = p
+		layer_id = id
+		layer_image = img
+
+
+## Handles CTRL+Z input to call undo function.
+func _process(a: float) -> void:
+	if Input.is_action_just_pressed("ui_undo"):
+		undo()
+
 
 func _ready() -> void:
 	camera.movable = camera_movable
@@ -63,6 +83,15 @@ func set_onion_skin_depth(new_depth: int) -> void:
 	onion_skin_renderer.set_depth(new_depth)
 
 
+## Replaces a page with a stored older version.
+func undo() -> void:
+	if edits.size() == 0:
+		return
+	var edit = edits.pop_back()
+	var current_page = _project.frames[edit.page]
+	current_page.set_layer(edit.layer_id, edit.layer_image)
+
+
 ## Bakes [code]dynamic_node[/code] contents to the current page.
 func bake_page() -> void:
 	# Getting items from our project.
@@ -97,6 +126,12 @@ func bake_page() -> void:
 			image_to_bake.set_pixel(x, y, c)
 
 	var layer_image = current_page.layers[current_layer]
+	
+	var edit = Edit.new(_project.current_frame, current_layer, layer_image.duplicate()) # Creates an Edit object storing current state of project.
+	edits.append(edit)
+	if edits.size() > 20: # Stores a maximum of 20 edits.
+		edits.pop_front()
+		
 	layer_image.blend_rect(
 		image_to_bake, Rect2(Vector2.ZERO, image_to_bake.get_size()), Vector2.ZERO
 	)
