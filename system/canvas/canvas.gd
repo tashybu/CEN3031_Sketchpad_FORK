@@ -3,6 +3,16 @@ extends Node2D
 
 signal canvas_input(event: InputEventMouse)
 
+## Basic class to store a page and a layer within.
+class Edit:
+	var page: int
+	var layer_id: int
+	var layer_image: Variant
+	func _init(p, id, img) -> void:
+		page = p
+		layer_id = id
+		layer_image = img
+
 @export var camera_movable: bool = false
 @export var camera: Camera2D
 
@@ -16,17 +26,6 @@ var edits: Array[Edit]
 
 @onready var bake_viewport: Viewport = $BakeViewport
 @onready var bake_node: Node2D = $BakeViewport/Bake
-
-
-## Basic class to store a page and a layer within.
-class Edit:
-	var page: int
-	var layer_id: int
-	var layer_image: Variant
-	func _init(p, id, img) -> void:
-		page = p
-		layer_id = id
-		layer_image = img
 
 
 ## Handles CTRL+Z input to call undo function.
