@@ -9,6 +9,7 @@ signal canvas_input(event: InputEventMouse)
 var _project: Project
 
 @onready var control_node: Control = $Control
+var edits: Array[Edit]
 @onready var layers_node: Node2D = $Control/Layers
 @onready var onion_skin_renderer: OnionSkinRenderer = $Control/OnionSkin
 @onready var dynamic_node: Node2D = $Control/Dynamic
@@ -16,15 +17,12 @@ var _project: Project
 @onready var bake_viewport: Viewport = $BakeViewport
 @onready var bake_node: Node2D = $BakeViewport/Bake
 
-var edits: Array[Edit]
-
 
 ## Basic class to store a page and a layer within.
 class Edit:
 	var page: int
 	var layer_id: int
 	var layer_image: Variant
-	
 	func _init(p, id, img) -> void:
 		page = p
 		layer_id = id
@@ -32,7 +30,7 @@ class Edit:
 
 
 ## Handles CTRL+Z input to call undo function.
-func _process(a: float) -> void:
+func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ui_undo"):
 		undo()
 
@@ -126,12 +124,10 @@ func bake_page() -> void:
 			image_to_bake.set_pixel(x, y, c)
 
 	var layer_image = current_page.layers[current_layer]
-	
 	var edit = Edit.new(_project.current_frame, current_layer, layer_image.duplicate()) # Creates an Edit object storing current state of project.
 	edits.append(edit)
 	if edits.size() > 20: # Stores a maximum of 20 edits.
 		edits.pop_front()
-		
 	layer_image.blend_rect(
 		image_to_bake, Rect2(Vector2.ZERO, image_to_bake.get_size()), Vector2.ZERO
 	)
