@@ -6,8 +6,8 @@ signal canvas_input(event: InputEventMouse)
 @export var camera_movable: bool = false
 @export var camera: Camera2D
 
-var _project: Project
 var edits: Array[Edit]
+var _project: Project
 
 @onready var control_node: Control = $Control
 @onready var layers_node: Node2D = $Control/Layers
@@ -18,14 +18,14 @@ var edits: Array[Edit]
 @onready var bake_node: Node2D = $BakeViewport/Bake
 
 
+func _ready() -> void:
+	camera.movable = camera_movable
+
+
 ## Handles CTRL+Z input to call undo function.
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ui_undo"):
 		undo()
-
-
-func _ready() -> void:
-	camera.movable = camera_movable
 
 
 func attach_project(project: Project) -> void:
