@@ -3,16 +3,6 @@ extends Node2D
 
 signal canvas_input(event: InputEventMouse)
 
-## Basic class to store a page and a layer within.
-class Edit:
-	var page: int
-	var layer_id: int
-	var layer_image: Variant
-	func _init(p, id, img) -> void:
-		page = p
-		layer_id = id
-		layer_image = img
-
 @export var camera_movable: bool = false
 @export var camera: Camera2D
 
@@ -149,3 +139,14 @@ func bake_page() -> void:
 
 func _on_gui_input(event: InputEvent) -> void:
 	canvas_input.emit(event)
+
+
+## Basic class to store a page and a layer within.
+class Edit:
+	var page: int
+	var layer_id: int
+	var layer_image: Variant
+	func _init(p, id, img) -> void:
+		page = p
+		layer_id = id
+		layer_image = img
